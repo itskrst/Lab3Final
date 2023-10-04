@@ -1,8 +1,10 @@
+package AuctionBidding;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Lab3 {
+public class main {
 
     public static void main(String[] args) {
 
@@ -93,11 +95,16 @@ public class Lab3 {
                 }
             } else if (choice == 3) {
                 System.out.println("\n-- Auction Winners --");
-                for (Item item : auctionWinners) {
-                    System.out.println("Item: " + item.getItem());
-                    System.out.println("Winner: " + item.getWinningUser().getName());
-                    System.out.println("Winning Bid: ₱" + item.getHighestBid().getBidAmount());
-                    System.out.println();
+                for (Item item : seller.getItemsList()) {
+                    Bid highestBid = item.findAuctionWinner();
+                    DataEntry winningUser = item.getWinningUser();
+
+                    if (highestBid != null && winningUser != null) {
+                        System.out.println("Item: " + item.getItem());
+                        System.out.println("Winner: " + winningUser.getName());
+                        System.out.println("Winning Bid: ₱" + highestBid.getBidAmount());
+                        System.out.println();
+                    }
                 }
             } else if (choice == 4) {
                 System.out.println("\n-- Feedback --");
@@ -249,7 +256,7 @@ class Sell {
             String itemName = scanner.nextLine();
 
             if (itemName.equals("0")) {
-                break;  
+                break;  // Stop selling items
             }
 
             System.out.print("Enter Item Description: ");
@@ -315,8 +322,9 @@ class Item {
         this.bidIncrement = bidIncrement;
     }
 
-    public void placeBid(Bid bid) {
-        bids.add(bid);
+    public void placeBid(String buyerName, String buyerEmail, double bidAmount) {
+        Bid bidding = new Bid(buyerName, buyerEmail, bidAmount);
+        bids.add(bidding);
     }
 
     public List<Bid> getBids() {
@@ -348,11 +356,17 @@ class Item {
     }
 
     public Bid getHighestBid() {
-        return highestBid;
-    }
+        Bid highestBid = null;
+        double maxBidAmount = 0.0;
 
-    public void setHighestBid(Bid highestBid) {
-        this.highestBid = highestBid;
+        for (Bid bid : bids) {
+            if (bid.getBidAmount() > maxBidAmount) {
+                maxBidAmount = bid.getBidAmount();
+                highestBid = bid;
+            }
+        }
+
+        return highestBid;
     }
 
     public DataEntry getWinningUser() {
@@ -371,6 +385,20 @@ class Item {
 
     public List<String> getFeedbacks() {
         return feedbacks;
+    }
+
+    public Bid findAuctionWinner() {
+        Bid highestBid = null;
+        double maxBidAmount = 0.0;
+
+        for (Bid bid : bids) {
+            if (bid.getBidAmount() > maxBidAmount) {
+                maxBidAmount = bid.getBidAmount();
+                highestBid = bid;
+            }
+        }
+
+        return highestBid;
     }
 }
 
