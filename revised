@@ -249,7 +249,7 @@ class Sell {
             String itemName = scanner.nextLine();
 
             if (itemName.equals("0")) {
-                break;  // Stop selling items
+                break;  
             }
 
             System.out.print("Enter Item Description: ");
